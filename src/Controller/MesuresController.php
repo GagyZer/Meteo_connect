@@ -5,6 +5,10 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Entity\Mesures;
+use Doctrine\ORM\EntityManagerInterface; //ajout en bdd
 
 class MesuresController extends AbstractController
 {
@@ -16,14 +20,16 @@ class MesuresController extends AbstractController
         ]);
     }
     #[Route('/mesures/all', name: 'app_mesures_all')]
+
+
     public function getJson(Request $request)
     {
-        // Vérifier si la demande contient un fichier JSON
+        // Vï¿½rifier si la demande contient un fichier JSON
         if ($request->files->has('json_file')) {
-            // Récupérer le fichier JSON
+            // Rï¿½cupï¿½rer le fichier JSON
             $jsonFile = $request->files->get('json_file');
 
-            // Vérifier si le fichier est valide
+            // Vï¿½rifier si le fichier est valide
             if ($jsonFile->isValid() && $jsonFile->getClientOriginalExtension() === 'json') {
                 // Lire le contenu du fichier JSON
                 $jsonContent = file_get_contents($jsonFile->getPathname());
@@ -31,15 +37,15 @@ class MesuresController extends AbstractController
                 // Convertir le JSON en tableau associatif
                 $jsonData = json_decode($jsonContent, true);
 
-                // Faire ce que vous avez besoin de faire avec les données JSON
-                // Par exemple, retourner les données JSON en tant que réponse JSON
+                // Faire ce que vous avez besoin de faire avec les donnï¿½es JSON
+                // Par exemple, retourner les donnï¿½es JSON en tant que rï¿½ponse JSON
                 return new JsonResponse($jsonData); 
             } else {
                 // Le fichier n'est pas un fichier JSON valide
                 return new JsonResponse(['error' => 'Invalid JSON file'], 400);
             }
         } else {
-            // Aucun fichier JSON trouvé dans la demande
+            // Aucun fichier JSON trouvï¿½ dans la demande
             return new JsonResponse(['error' => 'No JSON file found in the request'], 400);
         }
     }
@@ -47,20 +53,20 @@ class MesuresController extends AbstractController
     #[Route("/mesures/temperature", name: "meteo_temperature")]
     public function temperature(MesuresRepository $mesuresRepository): JsonResponse
     {
-        // Récupérer la mesure la plus récente de la température
+        // Rï¿½cupï¿½rer la mesure la plus rï¿½cente de la tempï¿½rature
         $mesureTemperature = $mesuresRepository->findMostRecentTemperature();
 
-        // Vérifier si une mesure de température a été trouvée
+        // Vï¿½rifier si une mesure de tempï¿½rature a ï¿½tï¿½ trouvï¿½e
         if ($mesureTemperature) {
-            // Construire la réponse JSON
+            // Construire la rï¿½ponse JSON
             $response = [
                 'temperature' => $mesureTemperature->getTemperatureC(),
                 'date_heure' => $mesureTemperature->getDateHeure()->format('Y-m-d H:i:s')
             ];
-            // Renvoyer la réponse JSON
+            // Renvoyer la rï¿½ponse JSON
             return new JsonResponse($response);
         } else {
-            // Si aucune mesure de température n'est trouvée, renvoyer une réponse vide
+            // Si aucune mesure de tempï¿½rature n'est trouvï¿½e, renvoyer une rï¿½ponse vide
             return new JsonResponse([], JsonResponse::HTTP_NOT_FOUND);
         }
     }
@@ -68,23 +74,23 @@ class MesuresController extends AbstractController
     #[Route("/mesures/historique/{date}", name: "meteo_historique")]
     public function historique(string $date, MesuresRepository $mesuresRepository): JsonResponse
     {
-        // Convertir la chaîne de date en objet DateTime
+        // Convertir la chaï¿½ne de date en objet DateTime
         $dateObj = new \DateTime($date);
 
-        // Récupérer la mesure de température pour la date spécifiée
+        // Rï¿½cupï¿½rer la mesure de tempï¿½rature pour la date spï¿½cifiï¿½e
         $mesureTemperature = $mesuresRepository->findByDate($dateObj);
 
-        // Vérifier si une mesure de température a été trouvée
+        // Vï¿½rifier si une mesure de tempï¿½rature a ï¿½tï¿½ trouvï¿½e
         if ($mesureTemperature) {
-            // Construire la réponse JSON
+            // Construire la rï¿½ponse JSON
             $response = [
                 'temperature' => $mesureTemperature->getTemperatureC(),
                 'date_heure' => $mesureTemperature->getDateHeure()->format('Y-m-d H:i:s')
             ];
-            // Renvoyer la réponse JSON
+            // Renvoyer la rï¿½ponse JSON
             return new JsonResponse($response);
         } else {
-            // Si aucune mesure de température n'est trouvée, renvoyer une réponse vide
+            // Si aucune mesure de tempï¿½rature n'est trouvï¿½e, renvoyer une rï¿½ponse vide
             return new JsonResponse([], JsonResponse::HTTP_NOT_FOUND);
         }
     }
@@ -92,20 +98,20 @@ class MesuresController extends AbstractController
     #[Route("/mesures/humidite", name: "mesures_humidite")]
     public function humidite(MesuresRepository $mesuresRepository): JsonResponse
     {
-        // Récupérer la mesure d'humidité la plus récente
+        // Rï¿½cupï¿½rer la mesure d'humiditï¿½ la plus rï¿½cente
         $mesureHumidite = $mesuresRepository->findMostRecentHumidite();
 
-        // Vérifier si une mesure d'humidité a été trouvée
+        // Vï¿½rifier si une mesure d'humiditï¿½ a ï¿½tï¿½ trouvï¿½e
         if ($mesureHumidite) {
-            // Construire la réponse JSON
+            // Construire la rï¿½ponse JSON
             $response = [
                 'humidite' => $mesureHumidite->getHumidite(),
                 'date_heure' => $mesureHumidite->getDateHeure()->format('Y-m-d H:i:s')
             ];
-            // Renvoyer la réponse JSON
+            // Renvoyer la rï¿½ponse JSON
             return new JsonResponse($response);
         } else {
-            // Si aucune mesure d'humidité n'est trouvée, renvoyer une réponse vide
+            // Si aucune mesure d'humiditï¿½ n'est trouvï¿½e, renvoyer une rï¿½ponse vide
             return new JsonResponse([], JsonResponse::HTTP_NOT_FOUND);
         }
     }
@@ -113,20 +119,20 @@ class MesuresController extends AbstractController
     #[Route("/mesures/luminosite", name: "mesures_luminosite")]
     public function luminosite(MesuresRepository $mesuresRepository): JsonResponse
     {
-        // Récupérer la mesure de luminosité la plus récente
+        // Rï¿½cupï¿½rer la mesure de luminositï¿½ la plus rï¿½cente
         $mesureLuminosite = $mesuresRepository->findMostRecentLuminosite();
 
-        // Vérifier si une mesure de luminosité a été trouvée
+        // Vï¿½rifier si une mesure de luminositï¿½ a ï¿½tï¿½ trouvï¿½e
         if ($mesureLuminosite) {
-            // Construire la réponse JSON
+            // Construire la rï¿½ponse JSON
             $response = [
                 'luminosite' => $mesureLuminosite->getLuminosite(),
                 'date_heure' => $mesureLuminosite->getDateHeure()->format('Y-m-d H:i:s')
             ];
-            // Renvoyer la réponse JSON
+            // Renvoyer la rï¿½ponse JSON
             return new JsonResponse($response);
         } else {
-            // Si aucune mesure de luminosité n'est trouvée, renvoyer une réponse vide
+            // Si aucune mesure de luminositï¿½ n'est trouvï¿½e, renvoyer une rï¿½ponse vide
             return new JsonResponse([], JsonResponse::HTTP_NOT_FOUND);
         }
     }
@@ -134,23 +140,62 @@ class MesuresController extends AbstractController
     #[Route("/mesures/pression", name: "mesures_pression")]
     public function pression(MesuresRepository $mesuresRepository): JsonResponse
     {
-        // Récupérer la mesure de pression la plus récente
+        // Rï¿½cupï¿½rer la mesure de pression la plus rï¿½cente
         $mesurePression = $mesuresRepository->findMostRecentPression();
 
-        // Vérifier si une mesure de pression a été trouvée
+        // Vï¿½rifier si une mesure de pression a ï¿½tï¿½ trouvï¿½e
         if ($mesurePression) {
-            // Construire la réponse JSON
+            // Construire la rï¿½ponse JSON
             $response = [
                 'pression' => $mesurePression->getPression(),
                 'date_heure' => $mesurePression->getDateHeure()->format('Y-m-d H:i:s')
             ];
-            // Renvoyer la réponse JSON
+            // Renvoyer la rï¿½ponse JSON
             return new JsonResponse($response);
         } else {
-            // Si aucune mesure de pression n'est trouvée, renvoyer une réponse vide
+            // Si aucune mesure de pression n'est trouvï¿½e, renvoyer une rï¿½ponse vide
             return new JsonResponse([], JsonResponse::HTTP_NOT_FOUND);
         }
     }
 
+    #[Route('/mesures/ajout', name: 'mesures_post', methods: ['POST'])]
+
+    // #[Route('/mesures/ajout', name: 'mesures_post')]
+    public function ajouterMesure(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    {
+        // RÃ©cupÃ©rer les donnÃ©es JSON de la requÃªte
+        $donnees = json_decode($request->getContent(), true);
+
+        // VÃ©rifier si les donnÃ©es sont prÃ©sentes et complÃ¨tes
+        if (!isset($donnees['temperature_c'], $donnees['humidite'], $donnees['pression'], $donnees['luminosite'])) {
+            return new JsonResponse(['message' => 'DonnÃ©es incomplÃ¨tes'], 400);
+        }
+
+        // RÃ©cupÃ©rer les donnÃ©es individuelles
+        $temperature = $donnees['temperature_c'];
+        $humidite = $donnees['humidite'];
+        $pression = $donnees['pression'];
+        $luminosite = $donnees['luminosite'];
+        $temperatureF = $temperature * (9 / 5) + 32;
+
+        // Enregistrer les donnÃ©es dans la base de donnÃ©es ou effectuer d'autres traitements nÃ©cessaires
+        // Par exemple, vous pouvez utiliser Doctrine pour enregistrer les donnÃ©es dans la base de donnÃ©es
+        
+        $mesure = new Mesures();
+        $dateObj = new \DateTime();
+
+        $mesure->setTemperatureC($temperature);
+        $mesure->setTemperatureF($temperatureF);
+        $mesure->setHumidite($humidite);
+        $mesure->setPression($pression);
+        $mesure->setLuminosite($luminosite);
+        $mesure->setDateHeure($dateObj);
+
+        $entityManager->persist($mesure);
+        $entityManager->flush();
+
+        // RÃ©pondre avec un message de succÃ¨s
+        return new JsonResponse(['message' => 'Mesure ajoutÃ©e avec succÃ¨s'], 200);
+    }
 
 }
