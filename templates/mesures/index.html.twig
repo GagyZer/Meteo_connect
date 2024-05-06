@@ -4,11 +4,12 @@
 
 {% block body %}
 
-    <div class="d-flex justify-content-center" style="width: 80% ; margin: auto;margin-top: 150px; padding:10px; ">
-        <div class="text-center mx-5 bg-primary px-5 py-3">Column</div>
-        <div class="text-center mx-5 bg-primary px-5 py-3">Column</div>
-        <div class="text-center mx-5 bg-primary px-5 py-3">Column</div>
-        <div class="text-center mx-5 bg-primary px-5 py-3">Column</div>
-    </div>
-
+    {% for mesure in mesures %}
+        <div class="d-flex justify-content-center" style="width: 80% ; margin: auto;margin-top: 150px; padding:10px; ">
+            <div class="text-center mx-5 bg-primary px-5 py-3">Temperatures : {{ mesure.temperatureC }}</div>
+            <div class="text-center mx-5 bg-primary px-5 py-3">humidite : {{ mesure.humidite }}</div>
+            <div class="text-center mx-5 bg-primary px-5 py-3">pression : {{ mesure.pression }}</div>
+            <div class="text-center mx-5 bg-primary px-5 py-3">date et heure : {{ mesure.dateHeure|date('Y-m-d H:i:s') }}</div>
+        </div>
+    {% endfor %}
 {% endblock %}

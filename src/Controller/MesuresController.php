@@ -9,14 +9,17 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Entity\Mesures;
 use Doctrine\ORM\EntityManagerInterface; //ajout en bdd
+use App\Repository\MesuresRepository;
 
 class MesuresController extends AbstractController
 {
     #[Route('/mesures', name: 'app_mesures')]
-    public function index(): Response
+    public function index(MesuresRepository $mesuresRepository): Response
     {
+        $mesures = $mesuresRepository->findAll();
+
         return $this->render('mesures/index.html.twig', [
-            'controller_name' => 'MesuresController',
+            'mesures' => $mesures,
         ]);
     }
     #[Route('/mesures/all', name: 'app_mesures_all')]
