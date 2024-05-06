@@ -13,10 +13,23 @@
     {% endblock %}
 </head>
 <header>
-    <nav class="navbar bg-primary" data-bs-theme="dark">
-        <a>Meteo-Connect</a>
-        <a class="text-dark text-decoration-none" href="{{ path('ajouter_alarme') }}">Alarme</a>
+    <nav class="navbar navbar-expand-lg navbar-light bg-primary">
+        <a class="navbar-brand" href="#">MeteoConnect</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarText">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="{{ path('app_mesures') }}">Mesures</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('ajouter_alarme') }}">Alarme</a>
+                </li>
+            </ul>
+        </div>
     </nav>
+
 </header>
 {% block body %}{% endblock %}
 </html>
