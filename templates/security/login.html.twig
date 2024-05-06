@@ -1,47 +1,47 @@
-{% extends 'base.html.twig' %}
+    {% extends 'base.html.twig' %}
 
-{% block title %}Log in!{% endblock %}
+    {% block title %}Log in!{% endblock %}
 
-{% block stylesheets %}
-    {{ parent() }}
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-{% endblock %}
+    {% block stylesheets %}
+        {{ parent() }}
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    {% endblock %}
 
-{% block body %}
-    <div class="container">
-        <form method="post" class="form-signin">
-            {% if error %}
-                <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-            {% endif %}
+    {% block body %}
+        <div class="container">
+            <form method="post" class="form-signin">
+                {% if error %}
+                    <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                {% endif %}
 
-            {% if app.user %}
-                <div class="mb-3">
-                    You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
+                {% if app.user %}
+                    <div class="mb-3">
+                        You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
+                    </div>
+                {% endif %}
+
+                <h1 class="h3 mb-3 font-weight-normal text-dark">Please sign in</h1>
+                <label for="username" class="sr-only">Username</label>
+                <input type="text" value="{{ last_username }}" name="_username" id="username" class="form-control" placeholder="Username" autocomplete="username" required autofocus>
+                <label for="password" class="sr-only">Password</label>
+                <input type="password" name="_password" id="password" class="form-control" placeholder="Password" autocomplete="current-password" required>
+
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                {#
+                Uncomment this section and add a remember_me option below your firewall to activate remember me functionality.
+                See https://symfony.com/doc/current/security/remember_me.html
+
+                <div class="checkbox mb-3">
+                    <label>
+                        <input type="checkbox" name="_remember_me"> Remember me
+                    </label>
                 </div>
-            {% endif %}
+                #}
 
-            <h1 class="h3 mb-3 font-weight-normal text-dark">Please sign in</h1>
-            <label for="username" class="sr-only">Username</label>
-            <input type="text" value="{{ last_username }}" name="_username" id="username" class="form-control" placeholder="Username" autocomplete="username" required autofocus>
-            <label for="password" class="sr-only">Password</label>
-            <input type="password" name="_password" id="password" class="form-control" placeholder="Password" autocomplete="current-password" required>
-
-            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-
-            {#
-            Uncomment this section and add a remember_me option below your firewall to activate remember me functionality.
-            See https://symfony.com/doc/current/security/remember_me.html
-
-            <div class="checkbox mb-3">
-                <label>
-                    <input type="checkbox" name="_remember_me"> Remember me
-                </label>
-            </div>
-            #}
-
-            <button class="btn btn-lg btn-primary btn-block" type="submit">
-                Sign in
-            </button>
-        </form>
-    </div>
-{% endblock %}
+                <button class="btn btn-lg btn-primary btn-block" type="submit">
+                    Sign in
+                </button>
+            </form>
+        </div>
+    {% endblock %}
