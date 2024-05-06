@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Controller;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -9,9 +10,18 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Entity\Mesures;
 use Doctrine\ORM\EntityManagerInterface; //ajout en bdd
+use App\Entity\User;
+use App\Entity\Alarme;
 
 class MesuresController extends AbstractController
 {
+    private $httpClient;
+
+    public function __construct(HttpClientInterface $httpClient)
+    {
+        $this->httpClient = $httpClient;
+    }
+
     #[Route('/mesures', name: 'app_mesures')]
     public function index(): Response
     {
@@ -158,13 +168,14 @@ class MesuresController extends AbstractController
         }
     }
 
-    #[Route('/mesures/ajout', name: 'mesures_post', methods: ['POST'])]
+    // #[Route('/mesures/ajout', name: 'mesures_post', methods: ['POST'])]
 
-    // #[Route('/mesures/ajout', name: 'mesures_post')]
+    #[Route('/mesures/ajout', name: 'mesures_post')]
     public function ajouterMesure(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         // Récupérer les données JSON de la requête
-        $donnees = json_decode($request->getContent(), true);
+        // $donnees = json_decode($request->getContent(), true);
+        $donnees = json_decode('{"temperature_c":24.95,"humidite":46.94,"pression":98.44,"luminosite":255.00}', true);
 
         // Vérifier si les données sont présentes et complètes
         if (!isset($donnees['temperature_c'], $donnees['humidite'], $donnees['pression'], $donnees['luminosite'])) {
@@ -178,8 +189,6 @@ class MesuresController extends AbstractController
         $luminosite = $donnees['luminosite'];
         $temperatureF = $temperature * (9 / 5) + 32;
 
-        // Enregistrer les données dans la base de données ou effectuer d'autres traitements nécessaires
-        // Par exemple, vous pouvez utiliser Doctrine pour enregistrer les données dans la base de données
         
         $mesure = new Mesures();
         $dateObj = new \DateTime();
@@ -193,7 +202,128 @@ class MesuresController extends AbstractController
 
         $entityManager->persist($mesure);
         $entityManager->flush();
+        
 
+        // Récupérer le repository de l'entité User
+        $utilisateur = $this->getUser();
+
+        $userRepository = $entityManager->getRepository(User::class);
+        $alarmeRepo = $entityManager->getRepository(Alarme::class);
+
+        $userId = $utilisateur->getUserIdentifier();
+        $user = $userRepository->findOneBy(['username' => $userId]);
+    
+        $alarmes = $alarmeRepo->findAll();
+
+        foreach ($alarmes as $alarme) {
+            if($alarme->getUtilisateur() == $user){
+                if($alarme->getType() == 'temperature'){
+                    if($alarme->isInf() == true){
+                        if($alarme->getValeur() > $donnees['temperature_c']){
+                            $response = $this->httpClient->request('GET', 'http://192.168.37.68/eteindreAlarme', []);
+    
+                            if ($response->getStatusCode() === 200) {      
+                                // Retourner une réponse JSON indiquant que l'alarme a été éteinte avec succès
+                                return new JsonResponse(['message' => 'L\'alarme a été éteinte avec succès'], 200);
+                            } else {
+                                // Retourner une réponse JSON en cas d'erreur
+                                return new JsonResponse(['message' => 'Erreur lors de l\'envoi de la commande à l\'ESP32'], 500);
+                            }                        }
+                    }
+                    if($alarme->isSup() == true){
+                        if($alarme->getValeur() < $donnees['temperature_c']){
+                            $response = $this->httpClient->request('GET', 'http://192.168.37.68/eteindreAlarme', []);
+    
+                            if ($response->getStatusCode() === 200) {      
+                                // Retourner une réponse JSON indiquant que l'alarme a été éteinte avec succès
+                                return new JsonResponse(['message' => 'L\'alarme a été éteinte avec succès'], 200);
+                            } else {
+                                // Retourner une réponse JSON en cas d'erreur
+                                return new JsonResponse(['message' => 'Erreur lors de l\'envoi de la commande à l\'ESP32'], 500);
+                            }                        }
+                    }
+                }
+                if($alarme->getType() == 'humidite'){
+                    if($alarme->isInf() == true){
+                        if($alarme->getValeur() > $donnees['humidite']){
+                            $response = $this->httpClient->request('GET', 'http://192.168.37.68/eteindreAlarme', []);
+    
+                            if ($response->getStatusCode() === 200) {      
+                                // Retourner une réponse JSON indiquant que l'alarme a été éteinte avec succès
+                                return new JsonResponse(['message' => 'L\'alarme a été éteinte avec succès'], 200);
+                            } else {
+                                // Retourner une réponse JSON en cas d'erreur
+                                return new JsonResponse(['message' => 'Erreur lors de l\'envoi de la commande à l\'ESP32'], 500);
+                            }                        }
+                    }
+                    if($alarme->isSup() == true){
+                        if($alarme->getValeur() < $donnees['humidite']){
+                            $response = $this->httpClient->request('GET', 'http://192.168.37.68/eteindreAlarme', []);
+    
+                            if ($response->getStatusCode() === 200) {      
+                                // Retourner une réponse JSON indiquant que l'alarme a été éteinte avec succès
+                                return new JsonResponse(['message' => 'L\'alarme a été éteinte avec succès'], 200);
+                            } else {
+                                // Retourner une réponse JSON en cas d'erreur
+                                return new JsonResponse(['message' => 'Erreur lors de l\'envoi de la commande à l\'ESP32'], 500);
+                            }                        }
+                    }
+                }
+                if($alarme->getType() == 'pression'){
+                    if($alarme->isInf() == true){
+                        if($alarme->getValeur() > $donnees['pression']){
+                            $response = $this->httpClient->request('GET', 'http://192.168.37.68/eteindreAlarme', []);
+    
+                            if ($response->getStatusCode() === 200) {      
+                                // Retourner une réponse JSON indiquant que l'alarme a été éteinte avec succès
+                                return new JsonResponse(['message' => 'L\'alarme a été éteinte avec succès'], 200);
+                            } else {
+                                // Retourner une réponse JSON en cas d'erreur
+                                return new JsonResponse(['message' => 'Erreur lors de l\'envoi de la commande à l\'ESP32'], 500);
+                            }                        }
+                    }
+                    if($alarme->isSup() == true){
+                        if($alarme->getValeur() < $donnees['pression']){
+                            $response = $this->httpClient->request('GET', 'http://192.168.37.68/eteindreAlarme', []);
+    
+                            if ($response->getStatusCode() === 200) {      
+                                // Retourner une réponse JSON indiquant que l'alarme a été éteinte avec succès
+                                return new JsonResponse(['message' => 'L\'alarme a été éteinte avec succès'], 200);
+                            } else {
+                                // Retourner une réponse JSON en cas d'erreur
+                                return new JsonResponse(['message' => 'Erreur lors de l\'envoi de la commande à l\'ESP32'], 500);
+                            }                        }
+                    }
+                }
+                if($alarme->getType() == 'luminosite'){
+                    if($alarme->isInf() == true){
+                        if($alarme->getValeur() > $donnees['luminosite']){
+                            $response = $this->httpClient->request('GET', 'http://192.168.37.68/eteindreAlarme', []);
+    
+                            if ($response->getStatusCode() === 200) {      
+                                // Retourner une réponse JSON indiquant que l'alarme a été éteinte avec succès
+                                return new JsonResponse(['message' => 'L\'alarme a été éteinte avec succès'], 200);
+                            } else {
+                                // Retourner une réponse JSON en cas d'erreur
+                                return new JsonResponse(['message' => 'Erreur lors de l\'envoi de la commande à l\'ESP32'], 500);
+                            }                        }
+                    }
+                    if($alarme->isSup() == true){
+                        if($alarme->getValeur() < $donnees['luminosite']){
+                            $response = $this->httpClient->request('GET', 'http://192.168.37.68/eteindreAlarme', []);
+    
+                            if ($response->getStatusCode() === 200) {      
+                                // Retourner une réponse JSON indiquant que l'alarme a été éteinte avec succès
+                                return new JsonResponse(['message' => 'L\'alarme a été éteinte avec succès'], 200);
+                            } else {
+                                // Retourner une réponse JSON en cas d'erreur
+                                return new JsonResponse(['message' => 'Erreur lors de l\'envoi de la commande à l\'ESP32'], 500);
+                            }                        }
+                    }
+                }
+            }
+
+        }
         // Répondre avec un message de succès
         return new JsonResponse(['message' => 'Mesure ajoutée avec succès'], 200);
     }

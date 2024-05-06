@@ -8,6 +8,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface; //ajout en bdd
 use App\Entity\Alarme;
+use App\Entity\User;
 
 class AlarmeController extends AbstractController
 {
@@ -27,13 +28,19 @@ class AlarmeController extends AbstractController
 
         // Vérifie si la requête est de type POST
         if ($request->isMethod('POST')) {
+
             // Récupère l'utilisateur actuellement connecté
             $utilisateur = $this->getUser();
+
+            $userRepository = $entityManager->getRepository(User::class);
+            $userId = $utilisateur->getUserIdentifier();
+            $utilisateur = $userRepository->findOneBy(['username' => $userId]);
+
+  
         
             // Récupère les données du formulaire
             $type = $request->request->get('type');
             $valeur = $request->request->get('valeur');
-            
             $alarmeType = $request->request->get('alarme'); // Récupère la valeur du radio bouton
             // Détermine si l'alarme est inférieure ou supérieure
             $inf = $alarmeType === 'inf' ? true : false;
