@@ -13,6 +13,10 @@ class Alarme
     #[ORM\Column]
     private ?int $id = null;
 
+    #[ORM\ManyToOne(inversedBy: 'alarmes')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?user $utilisateur = null;
+
     #[ORM\Column(length: 255)]
     private ?string $type = null;
 
@@ -29,6 +33,19 @@ class Alarme
     {
         return $this->id;
     }
+
+    public function getUtilisateur(): ?user
+    {
+        return $this->utilisateur;
+    }
+
+    public function setUtilisateur(?user $utilisateur): static
+    {
+        $this->utilisateur = $utilisateur;
+
+        return $this;
+    }
+
     public function getType(): ?string
     {
         return $this->type;

@@ -3,13 +3,16 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\Table(name: '`user`')]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_USERNAME', fields: ['username'])]
+#[UniqueEntity(fields: ['username'], message: 'There is already an account with this username')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -31,6 +34,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column]
     private ?string $password = null;
+
+    /**
+     * @var Collection<int, Alarme>
+     */
+    #[ORM\OneToMany(targetEntity: Alarme::class, mappedBy: 'utilisateur')]
+    private Collection $alarmes;
+
+    public function __construct()
+    {
+        $this->alarmes = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -104,5 +118,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    /**
+     * @return Collection<int, Alarme>
+     */
+    public function getAlarmes(): Collection
+    {
+        return $this->alarmes;
+    }
+
+    public function addAlarme(Alarme $alarme): static
+    {
+        if (!$this->alarmes->contains($alarme)) {
+            $this->alarmes->add($alarme);
+            $alarme->setUtilisateur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAlarme(Alarme $alarme): static
+    {
+        if ($this->alarmes->removeElement($alarme)) {
+            // set the owning side to null (unless already changed)
+            if ($alarme->getUtilisateur() === $this) {
+                $alarme->setUtilisateur(null);
+            }
+        }
+
+        return $this;
     }
 }
