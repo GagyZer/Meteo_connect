@@ -1,15 +1,39 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello MesuresController!{% endblock %}
+{% block title %}Mesures {% endblock %}
 
 {% block body %}
-
+        <div class="row" style="margin:3%;">
+            <div class="col">
+                <div class="text-center border border-primary rounded p-2 mb-4">
+                    <h3>Dernières températures enregistrées</h3>
+                </div>
+            </div>
+        </div>
     {% for mesure in mesures %}
-        <div class="d-flex justify-content-center" style="width: 80% ; margin: auto;margin-top: 150px; padding:10px; ">
-            <div class="text-center mx-5 bg-primary px-5 py-3">Temperatures : {{ mesure.temperatureC }}</div>
-            <div class="text-center mx-5 bg-primary px-5 py-3">Humidite : {{ mesure.humidite }}</div>
-            <div class="text-center mx-5 bg-primary px-5 py-3">Pression : {{ mesure.pression }}</div>
-            <div class="text-center mx-5 bg-primary px-5 py-3">Date et Heure : {{ mesure.dateHeure|date('Y-m-d H:i:s') }}</div>
+        <div class="d-flex justify-content-center" style="width: 80%; margin: auto; margin-top: 150px; padding: 10px;">
+            <div class="text-center mx-5 px-5 py-3">
+                <img src="{{ asset('celcius.png') }}" alt="TemperatureC" width="80%">
+                {{ mesure.temperatureC }}
+            </div>
+            <div class="text-center mx-5 px-5 py-3">
+                <img src="{{ asset('faren.png') }}" alt="TemperatureF" width="80%">
+                {{ mesure.temperatureF }}
+            </div>
+            <div class="text-center mx-5 px-5 py-3">
+                <img src="{{ asset('humidite.png') }}" alt="humidite" width="80%">
+                {{ mesure.humidite }}
+            </div>
+            <div class="text-center mx-5 px-5 py-3">
+                <img src="{{ asset('pression.png') }}" alt="pression" width="80%">
+                {{ mesure.pression }}
+            </div>
+            <div class="text-center mx-5 px-5 py-3">
+                <img src="{{ asset('luminosite.png') }}" alt="luminosite" width="80%">
+                {{ mesure.luminosite }}
+            </div>
+            {# <div class="text-center mx-5 px-5 py-3">Date et Heure : {{ mesure.dateHeure|date('Y-m-d H:i:s') }}</div> #}
         </div>
     {% endfor %}
 {% endblock %}
+

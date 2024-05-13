@@ -26,7 +26,7 @@ class MesuresController extends AbstractController
     #[Route('/mesures', name: 'app_mesures')]
     public function index(MesuresRepository $mesuresRepository): Response
     {
-        $mesures = $mesuresRepository->findAll();
+        $mesures = $mesuresRepository->findBy([], ['id' => 'DESC'], 1);
 
         return $this->render('mesures/index.html.twig', [
             'mesures' => $mesures,
@@ -177,8 +177,8 @@ class MesuresController extends AbstractController
     public function ajouterMesure(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         // Récupérer les données JSON de la requête
-        // $donnees = json_decode($request->getContent(), true);
-        $donnees = json_decode('{"temperature_c":24.95,"humidite":46.94,"pression":98.44,"luminosite":255.00}', true);
+        $donnees = json_decode($request->getContent(), true);
+        // $donnees = json_decode('{"temperature_c":24.95,"humidite":3.05,"pression":98.44,"luminosite":255.00}', true);
 
         // Vérifier si les données sont présentes et complètes
         if (!isset($donnees['temperature_c'], $donnees['humidite'], $donnees['pression'], $donnees['luminosite'])) {
@@ -213,13 +213,13 @@ class MesuresController extends AbstractController
         $userRepository = $entityManager->getRepository(User::class);
         $alarmeRepo = $entityManager->getRepository(Alarme::class);
 
-        $userId = $utilisateur->getUserIdentifier();
-        $user = $userRepository->findOneBy(['username' => $userId]);
+        // $userId = $utilisateur->getUserIdentifier();
+        $user = $userRepository->findOneBy(['username' => '1']);
     
         $alarmes = $alarmeRepo->findAll();
 
         foreach ($alarmes as $alarme) {
-            if($alarme->getUtilisateur() == $user){
+            if($alarme->getUtilisateur()->getId() == 1){
                 if($alarme->getType() == 'temperature'){
                     if($alarme->isInf() == true){
                         if($alarme->getValeur() > $donnees['temperature_c']){
@@ -227,7 +227,7 @@ class MesuresController extends AbstractController
     
                             if ($response->getStatusCode() === 200) {      
                                 // Retourner une réponse JSON indiquant que l'alarme a été éteinte avec succès
-                                return new JsonResponse(['message' => 'L\'alarme a été éteinte avec succès'], 200);
+                                return new JsonResponse(['message' => 'L\'alarme a été allumée avec succès'], 200);
                             } else {
                                 // Retourner une réponse JSON en cas d'erreur
                                 return new JsonResponse(['message' => 'Erreur lors de l\'envoi de la commande à l\'ESP32'], 500);
@@ -235,11 +235,11 @@ class MesuresController extends AbstractController
                     }
                     if($alarme->isSup() == true){
                         if($alarme->getValeur() < $donnees['temperature_c']){
-                            $response = $this->httpClient->request('GET', 'http://192.168.37.68/eteindreAlarme', []);
+                            $response = $this->httpClient->request('GET', 'http://192.168.37.68/allumerAlarme', []);
     
                             if ($response->getStatusCode() === 200) {      
-                                // Retourner une réponse JSON indiquant que l'alarme a été éteinte avec succès
-                                return new JsonResponse(['message' => 'L\'alarme a été éteinte avec succès'], 200);
+                                // Retourner une réponse JSON indiquant que l'alarme a été allumée avec succès
+                                return new JsonResponse(['message' => 'L\'alarme a été allumée avec succès'], 200);
                             } else {
                                 // Retourner une réponse JSON en cas d'erreur
                                 return new JsonResponse(['message' => 'Erreur lors de l\'envoi de la commande à l\'ESP32'], 500);
@@ -249,11 +249,11 @@ class MesuresController extends AbstractController
                 if($alarme->getType() == 'humidite'){
                     if($alarme->isInf() == true){
                         if($alarme->getValeur() > $donnees['humidite']){
-                            $response = $this->httpClient->request('GET', 'http://192.168.37.68/eteindreAlarme', []);
+                            $response = $this->httpClient->request('GET', 'http://192.168.37.68/allumerAlarme', []);
     
                             if ($response->getStatusCode() === 200) {      
-                                // Retourner une réponse JSON indiquant que l'alarme a été éteinte avec succès
-                                return new JsonResponse(['message' => 'L\'alarme a été éteinte avec succès'], 200);
+                                // Retourner une réponse JSON indiquant que l'alarme a été allumée avec succès
+                                return new JsonResponse(['message' => 'L\'alarme a été allumée avec succès'], 200);
                             } else {
                                 // Retourner une réponse JSON en cas d'erreur
                                 return new JsonResponse(['message' => 'Erreur lors de l\'envoi de la commande à l\'ESP32'], 500);
@@ -261,11 +261,11 @@ class MesuresController extends AbstractController
                     }
                     if($alarme->isSup() == true){
                         if($alarme->getValeur() < $donnees['humidite']){
-                            $response = $this->httpClient->request('GET', 'http://192.168.37.68/eteindreAlarme', []);
+                            $response = $this->httpClient->request('GET', 'http://192.168.37.68/allumerAlarme', []);
     
                             if ($response->getStatusCode() === 200) {      
-                                // Retourner une réponse JSON indiquant que l'alarme a été éteinte avec succès
-                                return new JsonResponse(['message' => 'L\'alarme a été éteinte avec succès'], 200);
+                                // Retourner une réponse JSON indiquant que l'alarme a été allumée avec succès
+                                return new JsonResponse(['message' => 'L\'alarme a été allumée avec succès'], 200);
                             } else {
                                 // Retourner une réponse JSON en cas d'erreur
                                 return new JsonResponse(['message' => 'Erreur lors de l\'envoi de la commande à l\'ESP32'], 500);
@@ -275,7 +275,7 @@ class MesuresController extends AbstractController
                 if($alarme->getType() == 'pression'){
                     if($alarme->isInf() == true){
                         if($alarme->getValeur() > $donnees['pression']){
-                            $response = $this->httpClient->request('GET', 'http://192.168.37.68/eteindreAlarme', []);
+                            $response = $this->httpClient->request('GET', 'http://192.168.37.68/allumerAlarme', []);
     
                             if ($response->getStatusCode() === 200) {      
                                 // Retourner une réponse JSON indiquant que l'alarme a été éteinte avec succès
@@ -287,7 +287,7 @@ class MesuresController extends AbstractController
                     }
                     if($alarme->isSup() == true){
                         if($alarme->getValeur() < $donnees['pression']){
-                            $response = $this->httpClient->request('GET', 'http://192.168.37.68/eteindreAlarme', []);
+                            $response = $this->httpClient->request('GET', 'http://192.168.37.68/allumerAlarme', []);
     
                             if ($response->getStatusCode() === 200) {      
                                 // Retourner une réponse JSON indiquant que l'alarme a été éteinte avec succès
@@ -301,7 +301,7 @@ class MesuresController extends AbstractController
                 if($alarme->getType() == 'luminosite'){
                     if($alarme->isInf() == true){
                         if($alarme->getValeur() > $donnees['luminosite']){
-                            $response = $this->httpClient->request('GET', 'http://192.168.37.68/eteindreAlarme', []);
+                            $response = $this->httpClient->request('GET', 'http://192.168.37.68/allumerAlarme', []);
     
                             if ($response->getStatusCode() === 200) {      
                                 // Retourner une réponse JSON indiquant que l'alarme a été éteinte avec succès
@@ -313,7 +313,7 @@ class MesuresController extends AbstractController
                     }
                     if($alarme->isSup() == true){
                         if($alarme->getValeur() < $donnees['luminosite']){
-                            $response = $this->httpClient->request('GET', 'http://192.168.37.68/eteindreAlarme', []);
+                            $response = $this->httpClient->request('GET', 'http://192.168.37.68/allumerAlarme', []);
     
                             if ($response->getStatusCode() === 200) {      
                                 // Retourner une réponse JSON indiquant que l'alarme a été éteinte avec succès

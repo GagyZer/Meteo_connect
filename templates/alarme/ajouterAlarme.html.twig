@@ -2,6 +2,35 @@
 
 {% block body %}
 <div class="container mt-5">
+
+    <button class="btn btn-primary" onclick="desactiverAlarme()">Désactiver l'alarme</button>
+    <div id="response"></div>
+
+    
+<script>
+    function desactiverAlarme(){
+        var xhr = new XMLHttpRequest();
+
+        xhr.onreadystatechange = function() {
+            if (xhr.status === 200) { // Vérifie le statut de la réponse
+                console.log('Requête GET réussie ! Réponse : ', xhr.responseText);
+                if (xhr.responseText.trim() !== '') { // Vérifie si la réponse n'est pas vide
+                    var response = JSON.parse(xhr.responseText); 
+                    document.getElementById("response").innerHTML = response.message;
+                } else {
+                    console.error('Réponse vide ou non parsable en JSON.');
+                }
+            } else {
+                console.error('Erreur lors de la requête.');
+            }
+        };
+
+        var url = "{{ path('eteindreAlarme') }}";
+        xhr.open("GET", url, true); 
+        xhr.send();
+    }
+</script>
+
     <h2>Ajouter une alarme</h2>
     {% if messageConfirmation %}
     <div class="alert alert-success" role="alert">
