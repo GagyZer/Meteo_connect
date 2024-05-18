@@ -14,23 +14,32 @@
         <div class="d-flex justify-content-center" style="width: 80%; margin: auto; margin-top: 150px; padding: 10px;">
             <div class="text-center mx-5 px-5 py-3">
                 <img src="{{ asset('celcius.png') }}" alt="TemperatureC" width="80%">
-                {{ mesure.temperatureC }}
+                <br>
+                <p style="font-size:25px;">{{ mesure.temperatureC }}</p>
             </div>
             <div class="text-center mx-5 px-5 py-3">
                 <img src="{{ asset('faren.png') }}" alt="TemperatureF" width="80%">
-                {{ mesure.temperatureF }}
+                <br>
+
+                <p style="font-size:25px;">{{ mesure.temperatureF }}</p>
             </div>
             <div class="text-center mx-5 px-5 py-3">
                 <img src="{{ asset('humidite.png') }}" alt="humidite" width="80%">
-                {{ mesure.humidite }}
+                <br>
+
+                <p style="font-size:25px;">{{ mesure.humidite }}</p>
             </div>
             <div class="text-center mx-5 px-5 py-3">
                 <img src="{{ asset('pression.png') }}" alt="pression" width="80%">
-                {{ mesure.pression }}
+                <br>
+
+                <p style="font-size:25px;">{{ mesure.pression }}</p>
             </div>
             <div class="text-center mx-5 px-5 py-3">
                 <img src="{{ asset('luminosite.png') }}" alt="luminosite" width="80%">
-                {{ mesure.luminosite }}
+                <br>
+
+                <p style="font-size:25px;">{{ mesure.luminosite }}</p>
             </div>
             {# <div class="text-center mx-5 px-5 py-3">Date et Heure : {{ mesure.dateHeure|date('Y-m-d H:i:s') }}</div> #}
         </div>
