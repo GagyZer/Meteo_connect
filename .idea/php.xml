@@ -144,6 +144,10 @@
       <path value="$PROJECT_DIR$/vendor/sebastian/diff" />
       <path value="$PROJECT_DIR$/vendor/sebastian/global-state" />
       <path value="$PROJECT_DIR$/vendor/sebastian/exporter" />
+      <path value="$PROJECT_DIR$/vendor/assets/js" />
+      <path value="$PROJECT_DIR$/vendor/assets/scss" />
+      <path value="$PROJECT_DIR$/vendor/assets/vendor" />
+      <path value="$PROJECT_DIR$/vendor/assets/css" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.2">

@@ -2,7 +2,23 @@
 
 {% block title %}Mesures {% endblock %}
 
+
 {% block body %}
+
+    <style>
+        .icons {
+            margin-bottom: 25px;
+            height: 100px;
+        }
+
+        .radius{
+            border-radius: 30px;
+        }
+    </style>
+    <div class="d-flex justify-content-center fw-bold" style="width: 80% ; margin: auto;margin-top: 150px; padding:10px; ">
+        <div class="text-center mx-5 bg-primary px-5 py-3 d-flex flex-column radius">
+            <img src="https://www.svgrepo.com/show/236207/thermometer-temperature.svg" alt="Image" class="icons">
+            Temperatures : {{ mesures.temperatureC }}
         <div class="row" style="margin:3%;">
             <div class="col">
                 <div class="text-center border border-primary rounded p-2 mb-4">
@@ -43,6 +59,22 @@
             </div>
             {# <div class="text-center mx-5 px-5 py-3">Date et Heure : {{ mesure.dateHeure|date('Y-m-d H:i:s') }}</div> #}
         </div>
-    {% endfor %}
+        <div class="text-center mx-5 bg-primary px-5 py-3 d-flex flex-column radius">
+            <img src="https://www.svgrepo.com/show/26690/humidity.svg" alt="Image" class="icons">
+            Humidite : {{ mesures.humidite }}
+        </div>
+        <div class="text-center mx-5 bg-primary px-5 py-3 d-flex flex-column radius">
+            <img src="https://cdn-icons-png.flaticon.com/512/763/763584.png" alt="Image" class="icons">
+            Pression : {{ mesures.pression }}
+        </div>
+        <div class="text-center mx-5 bg-primary px-5 py-3 d-flex flex-column radius">
+            <img src="https://cdn-icons-png.flaticon.com/512/2089/2089622.png" alt="Image" class="icons">
+            Luminosite : {{ mesures.luminosite }}
+        </div>
+        <div class="text-center mx-5 bg-primary px-5 py-3 d-flex flex-column radius">
+            <img src="https://svgsilh.com/svg_v2/1083479.svg" alt="Image" class="icons">
+            Date et Heure : {{ mesures.dateHeure|date('Y-m-d H:i:s') }}
+        </div>
+    </div>
 {% endblock %}
 

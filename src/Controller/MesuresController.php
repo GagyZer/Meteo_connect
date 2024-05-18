@@ -27,11 +27,28 @@ class MesuresController extends AbstractController
     public function index(MesuresRepository $mesuresRepository): Response
     {
         $mesures = $mesuresRepository->findBy([], ['id' => 'DESC'], 1);
-
         return $this->render('mesures/index.html.twig', [
             'mesures' => $mesures,
         ]);
     }
+
+    #[Route('/mesures/prévisions', name: 'app_predict')]
+    public function predict(MesuresRepository $mesuresRepository): Response
+    {
+        // Prédiction de la température pour la nuit
+        $nightTemperature = $mesuresRepository->predictNightTemperature();
+        // Prédiction de la température pour le matin
+        $morningTemperature = $mesuresRepository->predictMorningTemperature();
+        // Prédiction de la température pour l'après-midi
+        $afternoonTemperature = $mesuresRepository->predictAfternoonTemperature();
+
+        return $this->render('mesures/predict.html.twig', [
+            'nightTemperature' => $nightTemperature,
+            'morningTemperature' => $morningTemperature,
+            'afternoonTemperature' => $afternoonTemperature,
+        ]);
+    }
+
     #[Route('/mesures/all', name: 'app_mesures_all')]
 
 
