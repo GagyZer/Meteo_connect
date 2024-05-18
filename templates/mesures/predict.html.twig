@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello MesuresController!{% endblock %}
+
+
+{% block body %}
+
+    <style>
+        .icons {
+            margin-bottom: 25px;
+            height: 100px;
+        }
+
+        .radius{
+            border-radius: 30px;
+        }
+    </style>
+    <h3 class="text-center mt-5">Prevision Pour Demain</h3>
+    <div class="d-flex justify-content-center fw-bold" style="width: 80% ; margin: auto;margin-top: 150px; padding:10px; ">
+        <div class="text-center mx-5 bg-primary px-5 py-3 d-flex flex-column radius">
+            <img src="https://cdn-icons-png.flaticon.com/512/2445/2445821.png" alt="Image" class="icons">
+            Matin : {{ morningTemperature }}
+        </div>
+        <div class="text-center mx-5 bg-primary px-5 py-3 d-flex flex-column radius">
+            <img src="https://www.pngmart.com/files/21/Afternoon-PNG-Clipart.png" alt="Image" class="icons">
+            Apres midi : {{ afternoonTemperature }}
+        </div>
+        <div class="text-center mx-5 bg-primary px-5 py-3 d-flex flex-column radius">
+            <img src="https://cdn-icons-png.flaticon.com/512/91/91466.png" alt="Image" class="icons">
+            Nuit : {{ nightTemperature }}
+        </div>
+    </div>
+{% endblock %}

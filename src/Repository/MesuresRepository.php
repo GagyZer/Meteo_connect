@@ -21,6 +21,15 @@ class MesuresRepository extends ServiceEntityRepository
         parent::__construct($registry, Mesures::class);
     }
 
+    public function findMostRecent(): ?Mesures
+    {
+        return $this->createQueryBuilder('m')
+            ->orderBy('m.dateHeure', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
 
     public function findMostRecentTemperature(): ?Mesures
     {
@@ -73,6 +82,54 @@ class MesuresRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult();
     }
+
+    public function predictNightTemperature(): ?float
+    {
+        $start = new \DateTime('yesterday midnight'); // Début de la journée précédente à minuit
+        $end = new \DateTime('yesterday 06:00:00'); // Début de la journée actuelle à 6h du matin
+
+        $queryBuilder = $this->createQueryBuilder('m')
+            ->select('AVG(m.temperatureC)')
+            ->where('m.dateHeure >= :start')
+            ->andWhere('m.dateHeure < :end')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end);
+
+        return $queryBuilder->getQuery()->getSingleScalarResult();
+    }
+
+
+    public function predictMorningTemperature(): ?float
+    {
+        $start = new \DateTime('yesterday 06:00:01'); // Début de la journée précédente à 6h01
+        $end = new \DateTime('yesterday noon'); // Début de la journée précédente à midi
+
+        $queryBuilder = $this->createQueryBuilder('m')
+            ->select('AVG(m.temperatureC)')
+            ->where('m.dateHeure >= :start')
+            ->andWhere('m.dateHeure <= :end')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end);
+
+        return $queryBuilder->getQuery()->getSingleScalarResult();
+    }
+
+    public function predictAfternoonTemperature(): ?float
+    {
+        $start = new \DateTime('yesterday noon'); // Début de la journée précédente à midi
+        $end = new \DateTime('today midnight'); // Début de la journée actuelle à minuit
+
+        $queryBuilder = $this->createQueryBuilder('m')
+            ->select('AVG(m.temperatureC)')
+            ->where('m.dateHeure >= :start')
+            ->andWhere('m.dateHeure <= :end')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end);
+
+        return $queryBuilder->getQuery()->getSingleScalarResult();
+    }
+
+
 
 //    /**
 //     * @return Mesures[] Returns an array of Mesures objects
