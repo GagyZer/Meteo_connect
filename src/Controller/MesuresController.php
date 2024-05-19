@@ -27,6 +27,7 @@ class MesuresController extends AbstractController
     public function index(MesuresRepository $mesuresRepository): Response
     {
         $mesures = $mesuresRepository->findBy([], ['id' => 'DESC'], 1);
+        
         return $this->render('mesures/index.html.twig', [
             'mesures' => $mesures,
         ]);
@@ -50,8 +51,6 @@ class MesuresController extends AbstractController
     }
 
     #[Route('/mesures/all', name: 'app_mesures_all')]
-
-
     public function getJson(Request $request)
     {
         // V�rifier si la demande contient un fichier JSON
@@ -195,7 +194,7 @@ class MesuresController extends AbstractController
     {
         // Récupérer les données JSON de la requête
         $donnees = json_decode($request->getContent(), true);
-        // $donnees = json_decode('{"temperature_c":24.95,"humidite":3.05,"pression":98.44,"luminosite":255.00}', true);
+        // $donnees = json_decode('{"temperature_c":24.95,"humidite":3.05,"pression":98.44,"luminosite":50.00}', true);
 
         // Vérifier si les données sont présentes et complètes
         if (!isset($donnees['temperature_c'], $donnees['humidite'], $donnees['pression'], $donnees['luminosite'])) {
@@ -212,6 +211,7 @@ class MesuresController extends AbstractController
         
         $mesure = new Mesures();
         $dateObj = new \DateTime();
+        $dateObj->add(new \DateInterval('PT2H'));
 
         $mesure->setTemperatureC($temperature);
         $mesure->setTemperatureF($temperatureF);
@@ -219,10 +219,8 @@ class MesuresController extends AbstractController
         $mesure->setPression($pression);
         $mesure->setLuminosite($luminosite);
         $mesure->setDateHeure($dateObj);
-
         $entityManager->persist($mesure);
         $entityManager->flush();
-        
 
         // Récupérer le repository de l'entité User
         $utilisateur = $this->getUser();
@@ -236,7 +234,7 @@ class MesuresController extends AbstractController
         $alarmes = $alarmeRepo->findAll();
 
         foreach ($alarmes as $alarme) {
-            if($alarme->getUtilisateur()->getId() == 1){
+            if($alarme->getUtilisateur()->getId() == 5 || $alarme->getUtilisateur()->getId() == 4 || $alarme->getUtilisateur()->getId() == 3 || $alarme->getUtilisateur()->getId() == 2 || $alarme->getUtilisateur()->getId() == 1 || $alarme->getUtilisateur()->getId() == 6){
                 if($alarme->getType() == 'temperature'){
                     if($alarme->isInf() == true){
                         if($alarme->getValeur() > $donnees['temperature_c']){
